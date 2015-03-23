@@ -1,6 +1,31 @@
-FROM centos:centos6
-MAINTAINER Wu ZhiQiang <fivesmallq@gmail.com>
+#
+# Java 1.7 & Maven & LittleProxy Dockerfile
+#
+# https://github.com/fivesmallq/littleproxy-docker
+#
 
-RUN yum update -y
-RUN yum install -y wget && wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u67-b01/jdk-7u67-linux-x64.rpm
-RUN rpm -ivh jdk-7u67-linux-x64.rpm && rm jdk-7u67-linux-x64.rpm
+# pull base image.
+FROM dockerfile/java:oracle-java7
+
+# maintainer details
+MAINTAINER Wu ZhiQiang "fivesmallq@gmail.com"
+
+# update packages and install maven
+RUN  \
+  export DEBIAN_FRONTEND=noninteractive && \
+  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
+  apt-get update && \
+  apt-get -y upgrade && \
+  apt-get install -y vim wget curl git maven
+
+# attach volumes
+VOLUME /volume/git
+
+# create working directory
+RUN mkdir -p /local/git
+WORKDIR /local/git
+
+# run LittleProxy
+CMD git clone git://github.com/adamfisk/LittleProxy.git
+CMD cd LittleProxy
+CMD ./run.bash
