@@ -26,6 +26,10 @@ RUN mkdir -p /local/git
 WORKDIR /local/git
 
 # run LittleProxy
+
 CMD git clone git://github.com/adamfisk/LittleProxy.git
-CMD cd LittleProxy
-CMD ./run.bash
+
+EXPOSE 8080
+ENTRYPOINT [\
+	"/local/git/LittleProxy/run.bash" \
+]
